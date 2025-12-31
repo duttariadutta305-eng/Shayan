@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Class 9 Biology – Killer Test</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+  font-family:Arial;
+  margin:0;
+  min-height:100vh;
+  background:
+    linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+    url("https://images.unsplash.com/photo-1513258496099-48168024aec0");
+  background-size:cover;
+  background-attachment:fixed;
+  color:#fff;
+}
+header{
+  text-align:center;
+  padding:25px;
+  background:rgba(0,0,0,0.6);
+}
+.container{
+  max-width:950px;
+  margin:20px auto;
+  background:rgba(255,255,255,0.97);
+  color:#000;
+  padding:25px;
+  border-radius:10px;
+}
+.question{margin-bottom:15px}
+button{
+  background:#1e6f5c;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:5px;
+  cursor:pointer;
+}
+button:hover{background:#134e3f}
+#timer{font-size:18px;font-weight:bold;color:#b00020;text-align:right}
+#result{font-size:20px;font-weight:bold;margin-top:20px}
+.pass{color:green}
+.fail{color:red}
+input[type="text"]{padding:8px;width:260px}
+#certificate{
+  display:none;
+  border:3px solid #1e6f5c;
+  padding:20px;
+  margin-top:20px;
+  text-align:center;
+}
+#review{
+  margin-top:30px;
+  padding:15px;
+  border-top:2px solid #ccc;
+}
+.wrong{color:#b00020}
+.correct{color:green}
+footer{
+  text-align:center;
+  padding:10px;
+  color:#ddd;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>📘 Class 9 Biology – KILLER MCQs</h1>
+<p>Cell & Tissues | Very High Difficulty</p>
+<p>Owner: <b>Shayan</b></p>
+</header>
+
+<div class="container">
+
+<div id="timer">Time Left: 30:00</div>
+
+<p><b>Student Name:</b></p>
+<input type="text" id="studentName" placeholder="Enter your name">
+
+<form id="quiz"></form>
+
+<button onclick="submitQuiz()">Submit Test</button>
+
+<div id="result"></div>
+
+<div id="certificate">
+<h2>📜 Certificate of Achievement</h2>
+<p>This certifies that</p>
+<h3 id="certName"></h3>
+<p>has <b>passed</b> the</p>
+<p><b>Class 9 Biology – Killer Test</b></p>
+<p>Score: <span id="certScore"></span></p>
+<p>Owner: <b>Shayan</b></p>
+<br>
+<button onclick="downloadPDF()">Download PDF Certificate</button>
+</div>
+
+<div id="review"></div>
+
+</div>
+
+<footer>
+© 2025 Biology MCQs | Designed by Shayan
+</footer>
+
+<script>
+/* ===== TIMER (30 MIN) ===== */
+let time = 1800;
+let timer = setInterval(()=>{
+  let m = Math.floor(time/60);
+  let s = time%60;
+  document.getElementById("timer").innerText =
+    "Time Left: "+m+":"+(s<10?"0":"")+s;
+  time--;
+  if(time<0){ clearInterval(timer); submitQuiz(); }
+},1000);
+
+/* ===== QUESTIONS (40 UNIQUE) ===== */
+const questions = [
+{q:"Which statement best explains semi-autonomy of mitochondria?",o:["They divide independently","They have ribosomes","They contain circular DNA","They lack membrane"],a:2},
+{q:"Loss of selective permeability causes:",o:["No respiration","Cell lysis","No protein synthesis","No division"],a:1},
+{q:"Common feature of chloroplast & mitochondria:",o:["Grana","Cristae","Double membrane","Starch"],a:2},
+{q:"Maximum ATP is formed during:",o:["Glycolysis","Krebs cycle","ETC","Fermentation"],a:2},
+{q:"Rough ER looks rough due to:",o:["DNA","Proteins","Ribosomes","Lipids"],a:2},
+{q:"A cell in hypotonic solution will:",o:["Shrink","Burst","Remain same","Plasmolyse"],a:1},
+{q:"Autolysis is caused by:",o:["Mitochondria","Nucleus","Lysosome","Ribosome"],a:2},
+{q:"Plasmolysis occurs due to:",o:["Endosmosis","Diffusion","Exosmosis","Active transport"],a:2},
+{q:"Golgi apparatus does NOT:",o:["Package","Secrete","Synthesize proteins","Transport"],a:2},
+{q:"Absent in prokaryotes:",o:["Ribosome","Cell membrane","Nucleus","Cytoplasm"],a:2},
+
+{q:"Cell theory does not explain:",o:["Origin of cell","Cell continuity","Cell division","Cell structure"],a:0},
+{q:"Turgidity in plant cell is due to:",o:["Cell wall","Vacuole","Cytoplasm","Nucleus"],a:1},
+{q:"Plastids can interconvert because:",o:["Same DNA","Same membrane","Same enzymes","Same size"],a:0},
+{q:"Fastest diffusion occurs in:",o:["Solid","Liquid","Gas","Cell"],a:2},
+{q:"Without ribosomes cell cannot:",o:["Respire","Divide","Make proteins","Excrete"],a:2},
+{q:"Most permeable structure:",o:["Cell wall","Plasma membrane","Nuclear membrane","Mitochondrial membrane"],a:0},
+{q:"Energy is required in:",o:["Diffusion","Osmosis","Active transport","Plasmolysis"],a:2},
+{q:"Cristae increase area for:",o:["Photosynthesis","ATP synthesis","Osmosis","Transport"],a:1},
+{q:"Controls entry & exit:",o:["Cell wall","Plasma membrane","Cytoplasm","Vacuole"],a:1},
+{q:"Living cell without nucleus:",o:["Bacteria","RBC","Virus","Platelet"],a:1},
+
+{q:"Highest regenerative capacity:",o:["Meristem","Muscle","Nervous","Sclerenchyma"],a:0},
+{q:"Xylem vessels are dead because:",o:["No nucleus","No cytoplasm","Strength","All"],a:3},
+{q:"Phloem transport is:",o:["Upward","Downward","Bidirectional","Passive"],a:2},
+{q:"Tendon connects:",o:["Bone–bone","Muscle–bone","Nerve–muscle","Bone–cartilage"],a:1},
+{q:"Never fatigues:",o:["Skeletal","Smooth","Cardiac","Striated"],a:2},
+{q:"Smooth muscle is:",o:["Fast","Voluntary","Slow","Striped"],a:2},
+{q:"Diffusion epithelium:",o:["Cuboidal","Columnar","Squamous","Ciliated"],a:2},
+{q:"Cartilage lacks:",o:["Cells","Matrix","Blood vessels","Fibers"],a:2},
+{q:"Conducts impulse:",o:["Muscle","Nervous","Connective","Epithelial"],a:1},
+{q:"Stores fat:",o:["Areolar","Adipose","Cartilage","Blood"],a:1},
+{q:"Flexible plant tissue:",o:["Parenchyma","Collenchyma","Sclerenchyma","Xylem"],a:1},
+{q:"Muscle contracts due to:",o:["Actin & myosin","Calcium","Water","ATP absence"],a:0},
+{q:"Lines organs internally:",o:["Epithelial","Muscle","Connective","Nervous"],a:0},
+{q:"Fluid connective tissue:",o:["Blood","Cartilage","Bone","Areolar"],a:0},
+{q:"Fastest nerve conduction:",o:["Dendrite","Axon","Cyton","Synapse"],a:1},
+{q:"Mechanical support in plants:",o:["Xylem","Phloem","Parenchyma","Meristem"],a:0},
+{q:"Least regenerative tissue:",o:["Epithelial","Nervous","Muscle","Meristem"],a:1}
+];
+
+/* ===== RENDER ===== */
+const quiz=document.getElementById("quiz");
+questions.forEach((q,i)=>{
+ let d=document.createElement("div");
+ d.className="question";
+ d.innerHTML=`<p>${i+1}. ${q.q}</p>`+
+ q.o.map((op,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${op}</label><br>`).join("");
+ quiz.appendChild(d);
+});
+
+let finalScore=0;
+
+/* ===== SUBMIT ===== */
+function submitQuiz(){
+ clearInterval(timer);
+ let score=0, reviewHTML="<h2>Review (Mistakes & Correct Answers)</h2>";
+ questions.forEach((q,i)=>{
+  let sel=document.querySelector(`input[name="q${i}"]:checked`);
+  if(sel && Number(sel.value)===q.a){
+    score++;
+  }else{
+    let your = sel ? q.o[sel.value] : "Not attempted";
+    reviewHTML+=`
+    <p class="wrong"><b>Q${i+1}:</b> ${q.q}<br>
+    Your answer: ${your}<br>
+    Correct answer: <span class="correct">${q.o[q.a]}</span></p>`;
+  }
+ });
+ finalScore=score;
+
+ let res=document.getElementById("result");
+ let name=document.getElementById("studentName").value;
+
+ if(score>=10){
+  res.innerHTML=`Your Score: ${score}/40 — <span class="pass">PASS ✅</span>`;
+  if(name.trim()!==""){
+   document.getElementById("certName").innerText=name;
+   document.getElementById("certScore").innerText=score+" / 40";
+   document.getElementById("certificate").style.display="block";
+  }
+ }else{
+  res.innerHTML=`Your Score: ${score}/40 — <span class="fail">FAIL ❌</span>`;
+  document.getElementById("certificate").style.display="none";
+ }
+
+ document.getElementById("review").innerHTML=reviewHTML;
+}
+
+/* ===== PDF ===== */
+function downloadPDF(){
+ const { jsPDF }=window.jspdf;
+ const doc=new jsPDF();
+ doc.setFontSize(22);
+ doc.text("Certificate of Achievement",105,30,null,null,"center");
+ doc.setFontSize(16);
+ doc.text(document.getElementById("certName").innerText,105,55,null,null,"center");
+ doc.setFontSize(14);
+ doc.text("Score: "+finalScore+" / 40",105,75,null,null,"center");
+ doc.text("Owner: Shayan",105,95,null,null,"center");
+ doc.save("Biology_Certificate.pdf");
+}
+</script>
+
+</body>
+</html>
